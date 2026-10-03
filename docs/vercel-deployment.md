@@ -17,10 +17,19 @@ Vercel 构建不会自动修改 Supabase 数据库。数据库结构必须先由
 | 文件 | 作用 |
 | --- | --- |
 | `vercel.json` | 固定框架、依赖安装命令和构建命令 |
+| `.vercelignore` | 排除 Vercel CLI 部署路径上的本地构建产物与机器相关文件 |
 | `scripts/validate-deployment-env.mjs` | 构建前校验必需环境变量，并拦截误用 secret/service role key |
 | `src/app/api/health/route.ts` | 发布后基础存活检查，不返回环境变量内容 |
 | `supabase/platform.sql` | 新 Supabase 项目的完整数据库结构 |
 | `supabase/updated.sql` | 已有项目的增量更新脚本 |
+
+补充说明：
+
+- Git 集成部署只上传已提交文件，因此 `.gitignore` 天然生效。
+- `vercel deploy` CLI **不读取** `.gitignore`，只用 Vercel 内置忽略列表加 `.vercelignore`。
+  本项目的 `next dev` 把 `distDir` 设为 `.next-dev`，而 Vercel 内置列表只包含 `.next`，
+  因此 `.next-dev`（约 167 MB）必须由 `.vercelignore` 显式排除，否则每次 CLI 部署都会
+  上传本地开发构建产物。
 
 ## 2. 前置条件
 
@@ -137,6 +146,9 @@ pnpm dlx vercel@latest deploy
 pnpm dlx vercel@latest deploy --prod
 ```
 
+CLI 路径不受 `.gitignore` 保护，`.vercelignore` 必须在仓库中已存在才会生效，因此首次
+link 后不要删除该文件。
+
 首次发布建议先执行 Preview 命令，验收通过后再部署 Production。
 
 ## 7. 构建命令
@@ -160,6 +172,26 @@ pnpm dlx vercel@latest deploy --prod
 
 任一步返回非零状态码，Vercel 都会把本次部署标记为失败。失败构建不会替换当前正常的
 Production Deployment。
+
+### 运行时限制
+
+以下为按当前代码实测的结论，用于判断是否需要额外配置：
+
+| 限制 | 平台数值 | 本项目现状 |
+| --- | --- | --- |
+| 函数最大执行时长 | Fluid compute 下默认 300 秒（Hobby、Pro、Enterprise 一致）；Pro 及以上可上调至 800 秒 | AI 词汇分析单次请求上限 45 秒，AI 连通性验证上限 20 秒，均在默认时长内 |
+| 请求与响应体上限 | 4.5 MB | 字幕与词汇导入为文本载荷，当前无接近上限的路径 |
+| 函数产物体积 | 250 MB | `.next/server` 约 34 MB |
+
+批量链接解析使用 `Promise.allSettled` 并发执行，单次最多 50 个链接，墙钟时长接近单次解析
+的 8 秒超时而非累加，因此同样在默认时长内。
+
+结论：当前无需声明 `maxDuration`。若后续引入更长的同步任务，请按 Next.js 规则在**页面
+层级**导出 `maxDuration`（Server Action 不在 `"use server"` 文件上设置），并同步确认目标
+套餐的上限。
+
+Vercel 默认在 `iad1`（美东）运行函数。若主要用户在国内，需评估函数到 Supabase 与视频
+平台的往返延迟；Hobby 套餐只能使用 `iad1`，调整区域需要 Pro 及以上。
 
 ## 8. 部署触发条件
 

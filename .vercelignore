@@ -1,0 +1,18 @@
+# Vercel CLI 不读取 .gitignore，只使用 Vercel 内置忽略列表加本文件。
+# Git 集成部署只上传已提交文件，因此本文件仅影响 `vercel deploy` CLI 路径。
+# 参考：https://vercel.com/docs/deployments/vercel-ignore
+
+# 开发构建产物。next.config.ts 在开发环境把 distDir 设为 .next-dev，
+# 而 Vercel 内置忽略列表只包含 .next，不包含 .next-dev。
+.next-dev
+
+# 本地生成的词汇包查询缓存与覆盖率报告，可由 scripts/ 重新生成。
+tmp
+coverage
+
+# 本地规划笔记，不参与应用构建与 Biome 检查。
+plans
+
+# 编辑器与操作系统噪声文件。
+.DS_Store
+*.tsbuildinfo
