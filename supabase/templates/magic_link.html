@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>登录验证码</title>
+  </head>
+  <body style="margin: 0; background: #f2f2f2; color: #15201f">
+    <div
+      style="
+        max-width: 480px;
+        margin: 40px auto;
+        padding: 36px;
+        background: #ffffff;
+        border-top: 6px solid #ef5b31;
+        font-family: Arial, sans-serif;
+      "
+    >
+      <p style="margin: 0 0 8px; color: #ef5b31; font-size: 12px; font-weight: 700">
+        NEXT / SUPABASE
+      </p>
+      <h1 style="margin: 0 0 16px; font-size: 24px">您的登录验证码</h1>
+      <p style="margin: 0 0 24px; color: #5d6662; line-height: 1.6">
+        请在登录页面输入以下 6 位验证码：
+      </p>
+      <div
+        style="
+          padding: 18px;
+          background: #15201f;
+          color: #ffffff;
+          font-family: Menlo, Monaco, Consolas, monospace;
+          font-size: 30px;
+          font-weight: 700;
+          letter-spacing: 10px;
+          text-align: center;
+        "
+      >
+        {{ .Token }}
+      </div>
+      <p style="margin: 24px 0 0; color: #5d6662; font-size: 12px; line-height: 1.6">
+        验证码将在 1 小时后失效。如非本人操作，请忽略此邮件。
+      </p>
+    </div>
+  </body>
+</html>

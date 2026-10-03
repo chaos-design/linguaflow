@@ -1,0 +1,8 @@
+{
+  "packageName": "linguaflow-video-learning-assistant",
+  "displayName": "LinguaFlow",
+  "brandInitials": "LF",
+  "description": "使用视频、时间戳笔记与学习统计组织个人学习流。",
+  "supabaseProjectId": "linguaflow-video-learning-assistant",
+  "devPort": 5566
+}

@@ -1,0 +1,42 @@
+[
+  {
+    "id": "b1",
+    "label": "B1",
+    "shortLabel": "B1 中级",
+    "description": "CEFR-J 1.6 B1 全量有效词条",
+    "tagNames": [
+      "B1"
+    ],
+    "itemCount": 2394
+  },
+  {
+    "id": "b2-ielts-6",
+    "label": "B2 / 雅思 6 分",
+    "shortLabel": "B2 / 雅思 6 分",
+    "description": "CEFR-J 1.6 B2 全量有效词条，雅思 6 分近似对应 B2",
+    "tagNames": [
+      "B2 / 雅思 6 分"
+    ],
+    "itemCount": 2771
+  },
+  {
+    "id": "c1",
+    "label": "C1",
+    "shortLabel": "C1 高级",
+    "description": "Octanove C1/C2 Profile 的 C1 全量有效词条",
+    "tagNames": [
+      "C1"
+    ],
+    "itemCount": 1026
+  },
+  {
+    "id": "common-phrases",
+    "label": "常用词组",
+    "shortLabel": "常用词组",
+    "description": "PHRASE List 高频多词表达全量有效词条",
+    "tagNames": [
+      "常用词组"
+    ],
+    "itemCount": 503
+  }
+]
