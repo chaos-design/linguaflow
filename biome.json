@@ -10,7 +10,8 @@
       "!design-reference",
       "!src/data/vocabulary-packs",
       "!next-env.d.ts",
-      "!pnpm-lock.yaml"
+      "!pnpm-lock.yaml",
+      "!vercel.json"
     ]
   },
   "formatter": {

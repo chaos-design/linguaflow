@@ -1,0 +1,52 @@
+name: CI
+
+# 本工作流只做质量门禁，不执行部署。
+# 生产与预览部署由 Vercel 的 Git 集成在 main 推送和 PR 上独立触发。
+# 质量门禁只在此处运行，Vercel 构建只负责 pnpm vercel:build；
+# 原因见 docs/vercel-deployment.md 第 7 节。
+#
+# 数据库相关检查（pnpm exec supabase db lint）需要 SUPABASE_ACCESS_TOKEN
+# 与已 link 的项目，属于受保护的凭据，不在此处运行。
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Lint, typecheck and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      # 置于 setup-node 之前，setup-node 的 pnpm 依赖缓存需要 pnpm 先在 PATH 上。
+      # 不指定 version，由 package.json 的 packageManager 字段提供唯一版本来源。
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          # 与 package.json 的 engines.node 保持一致。
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify
+        run: pnpm check

@@ -145,7 +145,7 @@ pnpm test            # Vitest
 pnpm check           # lint + typecheck + test
 pnpm build           # 生产构建
 pnpm validate:deployment-env # 校验部署所需环境变量
-pnpm vercel:build     # Vercel 完整质量检查与生产构建
+pnpm vercel:build     # Vercel 环境变量校验与生产构建
 ```
 
 ## 项目结构
@@ -168,8 +168,9 @@ design-reference/      原始静态视觉参考稿与素材
 ## 部署
 
 项目通过 `vercel.json` 固定使用 Next.js、`pnpm install --frozen-lockfile` 和
-`pnpm vercel:build`。构建会先校验环境变量，再执行 Biome、TypeScript、Vitest 和
-Next.js 生产构建。
+`pnpm vercel:build`。构建会先校验环境变量，再执行 Next.js 生产构建。
+Biome、TypeScript 和 Vitest 由 CI 在 PR 和 `main` 推送时作为质量门禁执行，
+不进入部署构建。
 
 部署前需要：
 

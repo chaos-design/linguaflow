@@ -167,11 +167,15 @@ link 后不要删除该文件。
 
 1. `pnpm install --frozen-lockfile`：严格按 `pnpm-lock.yaml` 安装依赖。
 2. `pnpm validate:deployment-env`：检查 Supabase 公共配置。
-3. `pnpm check`：依次执行 Biome、TypeScript 和 Vitest。
-4. `pnpm build`：生成 Next.js 生产构建。
+3. `pnpm build`：生成 Next.js 生产构建。
 
 任一步返回非零状态码，Vercel 都会把本次部署标记为失败。失败构建不会替换当前正常的
 Production Deployment。
+
+Biome、TypeScript 和 Vitest **不在构建命令中运行**，由 `.github/workflows/ci.yml`
+在 PR 和 `main` 推送时作为质量门禁执行。原因是 Vercel 会向源码目录写入一份平台生成的
+`vercel.json`，`biome check .` 会把这份非仓库文件判为格式错误从而阻塞部署；该问题与
+代码质量无关，也不应影响生产发布。`biome.json` 同时显式排除 `vercel.json`。
 
 ### 运行时限制
 
@@ -207,6 +211,19 @@ Vercel 默认在 `iad1`（美东）运行函数。若主要用户在国内，需
 同一分支连续 push 时，Vercel 会优先构建最新 commit，并可能取消尚未开始的旧构建。
 环境变量或 Supabase 配置变化本身不会自动触发部署。当前项目未配置 Ignored Build
 Step，因此包括文档变更在内的每次 Git push 都会触发对应环境的构建。
+
+## 8.1 质量门禁
+
+`.github/workflows/ci.yml` 在 Pull Request 和 `main` 推送时运行 `pnpm check`，即 Biome、
+TypeScript 和 Vitest。该工作流**不部署**，只负责在合并前拦截失败。Vercel 构建不重复执行
+这些检查，原因见第 7 节。
+
+冷安装约 3 分 30 秒，完整校验约 2 分钟，工作流超时设为 15 分钟。CI 产物不用于部署，
+因此不需要设置 `NEXT_PUBLIC_*` 环境变量。
+
+启用 `main` 分支保护时，把 `Lint, typecheck and test` 设为必需检查。
+需注意：GitHub 的必需检查以 job 名称匹配，改动 `ci.yml` 中的 `name:` 会使已有保护规则
+失效，需要同步更新。
 
 ## 9. 发布后检查
 
@@ -302,7 +319,8 @@ Vercel 回滚不会回滚 Supabase。数据库变更应优先采用向前修复�
 - [ ] 未向 Vercel 添加 service role key、数据库密码或访问令牌。
 - [ ] 数据库 SQL 已审核、备份并单独应用。
 - [ ] Supabase Site URL、Redirect URLs 和邮件模板已更新。
-- [ ] `pnpm vercel:build` 在本地或 CI 中通过。
+- [ ] CI 的 `Lint, typecheck and test` 已通过。
+- [ ] `pnpm vercel:build` 在本地通过。
 - [ ] Preview 已完成核心流程验收。
 - [ ] `/api/health` 与生产冒烟测试通过。
 - [ ] 已记录最后一个正常部署 URL，回滚人员具备权限。

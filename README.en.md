@@ -146,8 +146,9 @@ pnpm build
 For Vercel, import the repository, configure the two public Supabase variables
 for Preview and Production, apply the Supabase SQL separately, and configure
 the production and preview auth callback URLs. `vercel.json` installs with a
-frozen lockfile and runs environment validation, code checks, tests, and the
-production build through `pnpm vercel:build`.
+frozen lockfile and runs environment validation and the production build through
+`pnpm vercel:build`. Biome, TypeScript, and Vitest run as quality gates in CI on
+pull requests and pushes to `main`, not in the deployment build.
 
 See the Chinese [Vercel deployment guide](./docs/vercel-deployment.md) and
 [user guide](./docs/user-guide.md) for the complete operational workflow.
