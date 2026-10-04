@@ -1493,6 +1493,49 @@
   gap: 7px;
 }
 
+.home-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 22px;
+}
+
+.home-footer-links a {
+  display: inline-flex;
+  min-height: 32px;
+  align-items: center;
+  gap: 8px;
+  color: var(--landing-muted);
+  font-size: 12px;
+  transition: color 180ms ease;
+}
+
+.home-footer-links a:hover {
+  color: var(--landing-fg);
+}
+
+.home-footer-links a:focus-visible {
+  outline: 2px solid var(--landing-accent);
+  outline-offset: 3px;
+}
+
+.home-footer-github svg {
+  width: 16px;
+  height: 16px;
+}
+
+@media (max-width: 720px) {
+  .home-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    padding-block: 32px;
+  }
+
+  .home-footer-links {
+    gap: 18px;
+  }
+}
+
 @media (max-width: 1050px) {
   .home-hero-content {
     width: 80%;

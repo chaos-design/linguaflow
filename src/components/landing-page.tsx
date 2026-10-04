@@ -14,6 +14,9 @@ import {
 } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
+import { GithubMark } from "./brand"
+
+const repositoryUrl = "https://github.com/chaos-design/linguaflow"
 
 const capabilities = [
   {
@@ -361,6 +364,23 @@ export function LandingPage({ entryHref }: { entryHref: string }) {
           <strong>LinguaFlow</strong>
         </Link>
         <p>让内容被理解，让学习能继续。</p>
+        <div className="home-footer-links">
+          <a
+            className="home-footer-github"
+            href={repositoryUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <GithubMark />
+            GitHub
+          </a>
+          <Link className="home-footer-legal" href="/terms">
+            服务条款
+          </Link>
+          <Link className="home-footer-legal" href="/privacy">
+            隐私政策
+          </Link>
+        </div>
         <span>
           <i />
           READY TO REVIEW
