@@ -22,7 +22,7 @@ import {
   ShuffleIcon,
 } from "lucide-react"
 import Link from "next/link"
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { toast } from "sonner"
 import { EnglishPronunciation } from "../../components/english-pronunciation-buttons"
 import { PageHeading } from "../../components/page-heading"
@@ -885,6 +885,11 @@ function ActiveReviewSession({
     activeReviewMode === "context"
       ? (currentExample?.translation ?? "")
       : currentCard.translation
+  // 作答后把正确选项的文本回填到题面空缺，未作答时保持 null 以免泄露答案。
+  const revealedAnswer =
+    showAnswer && correctOptionId
+      ? (choiceOptions.find((option) => option.id === correctOptionId)?.text ?? null)
+      : null
 
   return (
     <div className="flex h-full min-h-0 flex-col bg-muted/30">
@@ -1000,6 +1005,7 @@ function ActiveReviewSession({
                 example={currentExample}
                 mode={activeReviewMode}
                 phrase={currentPhrase}
+                revealedAnswer={revealedAnswer}
               />
             </div>
             <Separator className="my-4" />
@@ -1435,11 +1441,13 @@ function ReviewPrompt({
   example,
   mode,
   phrase,
+  revealedAnswer,
 }: {
   card: VocabularyWord
   example: DictionaryExample | null
   mode: ReviewMode
   phrase: DictionaryPhrase | null
+  revealedAnswer: string | null
 }) {
   const chineseDefinition = getVocabularyChineseDefinition(card)
   if (mode === "phrase" && phrase) {
@@ -1447,7 +1455,10 @@ function ReviewPrompt({
     return (
       <div className="text-center">
         <CardTitle className="text-2xl leading-tight md:text-3xl">
-          {clozePrompt === "_____" ? phrase.example : clozePrompt}
+          <ClozePromptText
+            prompt={clozePrompt === "_____" ? phrase.example : clozePrompt}
+            revealedAnswer={revealedAnswer}
+          />
         </CardTitle>
       </div>
     )
@@ -1457,7 +1468,10 @@ function ReviewPrompt({
     return (
       <div className="text-center">
         <CardTitle className="text-2xl leading-tight md:text-3xl">
-          {createReviewClozePrompt(example.text, card.word)}
+          <ClozePromptText
+            prompt={createReviewClozePrompt(example.text, card.word)}
+            revealedAnswer={revealedAnswer}
+          />
         </CardTitle>
       </div>
     )
@@ -1480,6 +1494,46 @@ function ReviewPrompt({
       </CardTitle>
       <PronunciationLine card={card} />
     </div>
+  )
+}
+
+const clozeBlank = "_____"
+
+/**
+ * 选择答案后把题面中的空缺替换为正确答案，使用户在原句中直接看到正确词汇。
+ * 未作答时保持空缺，不泄露答案。
+ */
+export function ClozePromptText({
+  prompt,
+  revealedAnswer,
+}: {
+  prompt: string
+  revealedAnswer: string | null
+}) {
+  const segments = prompt.split(clozeBlank)
+  if (segments.length === 1) {
+    return <>{prompt}</>
+  }
+
+  return (
+    <>
+      {segments.map((segment, index) => (
+        <Fragment key={segment}>
+          {index > 0 ? (
+            revealedAnswer ? (
+              <mark className="rounded-sm bg-success/20 px-1 font-semibold text-foreground underline decoration-success decoration-2 underline-offset-4">
+                {revealedAnswer}
+              </mark>
+            ) : (
+              <span className="text-muted-foreground underline decoration-dotted underline-offset-4">
+                {clozeBlank}
+              </span>
+            )
+          ) : null}
+          {segment}
+        </Fragment>
+      ))}
+    </>
   )
 }
 
