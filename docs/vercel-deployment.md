@@ -36,7 +36,9 @@ Vercel 构建不会自动修改 Supabase 数据库。数据库结构必须先由
 - Git 仓库已推送到 Vercel 支持的 Git 提供商。
 - Vercel 账户有该仓库的读取权限。
 - 已创建 Supabase 项目，并取得 Project URL 和 publishable key。
-- 本地使用 Node.js 22 和 pnpm 11；版本由 `package.json` 固定。
+- 本地使用 Node.js 22.12 及以上和 pnpm 11；版本由 `package.json` 的 `engines` 固定。
+  下限为 22.12 是因为 Vitest 依赖 `require(esm)`，该能力在 22.12 之前不可用。
+  Vercel 只提供 major 版本，`engines` 声明的区间会解析到最新的 22.x，因此生产不受影响。
 - 生产域名、运营主体、支持渠道、隐私政策和服务条款已经确定。
 
 建议 Preview 与 Production 使用不同的 Supabase 项目。这样预览测试不会访问生产用户

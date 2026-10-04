@@ -42,6 +42,7 @@ jobs:
         uses: actions/setup-node@v7
         with:
           # 与 package.json 的 engines.node 保持一致。
+          # 只给 major，setup-node 会解析到最新的 22.x，满足 engines 的 22.12 下限。
           node-version: 22
           cache: pnpm
 
