@@ -3,6 +3,7 @@
 import {
   BarChart3Icon,
   BookMarkedIcon,
+  HomeIcon,
   LayersIcon,
   LayoutDashboardIcon,
   LibraryIcon,
@@ -98,6 +99,11 @@ const navigationSections = [
         href: "/workspace/settings",
         label: "设置",
         icon: SettingsIcon,
+      },
+      {
+        href: "/",
+        label: "站点首页",
+        icon: HomeIcon,
       },
     ],
   },
