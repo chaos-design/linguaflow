@@ -156,6 +156,21 @@
     @apply border-border outline-ring/50;
   }
 
+  /*
+   * 浏览器对 password/autofill 输入框注入的强制背景色（蓝/黄）不受边框圆角约束，
+   * 会在 InputGroup 等圆角容器的边角处溢出。这里统一改为背景色 + 文字色与主题一致，
+   * 溢出问题由容器 overflow-hidden 一并裁剪。
+   */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus-visible,
+  input:-webkit-autofill:active {
+    -webkit-text-fill-color: var(--foreground);
+    caret-color: var(--foreground);
+    transition: background-color 9999s ease-in-out;
+    box-shadow: 0 0 0 1000px inset var(--background);
+  }
+
   html {
     background: var(--background);
     letter-spacing: 0;
